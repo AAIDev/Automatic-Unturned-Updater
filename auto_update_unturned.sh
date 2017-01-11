@@ -13,17 +13,20 @@ UNTURNED_UPDATE_SCRIPT=""
 STEAMCMD_DIR=""
 STEAM_USER=  #NO QUOTES
 STEAM_PASS=  #NO QUOTES
-UNTURNED_ACF_LOCATION=""
+UNTURNED_ACF_LOCATION="" #This is the location of the appmanifest.acf file in the Unturned directory. This is probably somewhere in the steamapps folder in the Unturned root directory.
 update()
 {
-	rm -rf /root/bin/appcache
+	rm -rf /root/bin/appcache #Remove appcache folder so app_info_print returns correct information
 	
 	cd $STEAMCMD_DIR
+	
 	./steamcmd.sh +login $STEAM_USER $STEAM_PASS +app_info_update 1 +app_info_print "304930" +app_info_print "304930" +quit | grep -EA 1000 "^\s+\"branches\"$" | grep -EA 5 "^\s+\"public\"$" | grep -m 1 -EB 10 "^\s+}$" | grep -E "^\s+\"buildid\"\s+" | tr '[:blank:]"' ' ' | tr -s ' ' | sed 's/buildid//g' | sed 's/ //g' > unturned_steam_version.txt
 	cat $UNTURNED_ACF_LOCATION | grep "buildid" | sed 's/"buildid"//g' | sed 's/"//g' | tr -d '\t' > unturned_server_version.txt
+	
 	a="$(cat unturned_steam_version.txt)"
 	b="$(cat unturned_server_version.txt)"
-	if [ "$a" -gt "$b" ]; then
+	
+	if [ "$a" -gt "$b" ]; then #Is the buildid of the unturned Steam version more updated than the buildid of the Unturned version? If so, update.
 		echo "SERVER IS OUT OF DATE, SHUTTING DOWN"
 		
 		tmux send-keys -t $UNTURNED_SCREEN_SESSION "say \"SHUTTING DOWN IN FIVE SECONDS; UPDATING\"" C-m
@@ -38,10 +41,10 @@ update()
 		sleep 1
 		tmux send-keys -t $UNTURNED_SCREEN_SESSION "shutdown" C-m
 		
-		echo "Getting newest rocketmod".
+		echo "Getting newest rocketmod and unzipping".
 		
 		cd $UNTURNED_ROOT_DIRECTORY
-		wget http://api.rocketmod.net/download/unturned-linux/stable/$ROCKET_API_KEY/rocketmod.zip &> /dev/null
+		wget http://api.rocketmod.net/download/unturned-linux/stable/$ROCKET_API_KEY/rocketmod.zip
 		if [ ! -f /root/unturned_server/rocketmod.zip ]; then
 			echo "Directory not found, API either down or four calls have been used"
 		fi
@@ -59,9 +62,10 @@ update()
 		rm -rf rocketmod
 		cd ..
 		
-		echo "Updating and starting Unturned server"
+		echo "Killing tmux screen, updating and starting Unturned server"
 		
-		tmux kill-session -t $UNTURNED_SCREEN_SESSION
+		tmux kill-session -t $UNTURNED_SCREEN_SESSION #We do this all the way down here just to be sure Unturned is already shut down. TODO: add more reliable process for checking whether server is up or down.
+		
 		sh $UNTURNED_UPDATE_SCRIPT
 		sh $UNTURNED_START_SCRIPT
 
