@@ -4,6 +4,7 @@
 # - You run your server in a tmux session with a specific name
 # - Update scripts and start scripts are provided, but you have to give the directories as to where they are.
 #Note that for the unturned start and update scripts you have to provide not only the location of the SH files, but the actual files themselves in the variable.
+#Credits: LGSM dev KnightLife, StackOverflow
 
 ROCKET_API_KEY=""
 UNTURNED_SCREEN_SESSION=""
@@ -21,6 +22,8 @@ update()
 	cd $STEAMCMD_DIR
 	
 	./steamcmd.sh +login $STEAM_USER $STEAM_PASS +app_info_update 1 +app_info_print "304930" +app_info_print "304930" +quit | grep -EA 1000 "^\s+\"branches\"$" | grep -EA 5 "^\s+\"public\"$" | grep -m 1 -EB 10 "^\s+}$" | grep -E "^\s+\"buildid\"\s+" | tr '[:blank:]"' ' ' | tr -s ' ' | sed 's/buildid//g' | sed 's/ //g' > unturned_steam_version.txt
+	#Credit to LGSM developer KnightLife for this line of code ^^^ (https://steamdb.info/forum/362/appinfoprint-not-returning-latest-version-of-info/)
+	
 	cat $UNTURNED_ACF_LOCATION | grep "buildid" | sed 's/"buildid"//g' | sed 's/"//g' | tr -d '\t' > unturned_server_version.txt
 	
 	a="$(cat unturned_steam_version.txt)"
