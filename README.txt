@@ -1,10 +1,9 @@
 This is a simple automatic Unturned updater.
 
-Prerequesites:
- - Unturned
- - Rocketmod
- - Tmux
- - Two brain cells
+Requirements:
+ - Linux
+ - Running Unturned server in a TMUX session (script attached in GitHub for this)
+ - RocketMod already installed
  
  Steps:
  0. Install SteamCMD so you can do literally everything else here.
@@ -15,5 +14,4 @@ Prerequesites:
  4b. Make all SH files executable (chmod +x filename) 
  5. Start unturned server using provided script
  6. Start unturned updater using provided script
- 7. ???
- 8. Profit!
+ 7. Profit!
