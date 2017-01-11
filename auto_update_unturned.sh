@@ -33,16 +33,26 @@ update()
 		echo "SERVER IS OUT OF DATE, SHUTTING DOWN"
 		
 		tmux send-keys -t $UNTURNED_SCREEN_SESSION "say \"SHUTTING DOWN IN FIVE SECONDS; UPDATING\"" C-m
-		sleep 1
+		read -t 1 </dev/tty10 3<&- 3<&0 <&3
 		tmux send-keys -t $UNTURNED_SCREEN_SESSION "say \"SHUTTING DOWN IN FOUR SECONDS; UPDATING\"" C-m
-		sleep 1
+		read -t 1 </dev/tty10 3<&- 3<&0 <&3
 		tmux send-keys -t $UNTURNED_SCREEN_SESSION "say \"SHUTTING DOWN IN THREE SECONDS; UPDATING\"" C-m
-		sleep 1
+		read -t 1 </dev/tty10 3<&- 3<&0 <&3
 		tmux send-keys -t $UNTURNED_SCREEN_SESSION "say \"SHUTTING DOWN IN TWO SECONDS; UPDATING\"" C-m
-		sleep 1
+		read -t 1 </dev/tty10 3<&- 3<&0 <&3
 		tmux send-keys -t $UNTURNED_SCREEN_SESSION "say \"SHUTTING DOWN IN ONE SECOND; UPDATING\"" C-m
-		sleep 1
+		read -t 1 </dev/tty10 3<&- 3<&0 <&3
 		tmux send-keys -t $UNTURNED_SCREEN_SESSION "shutdown" C-m
+		
+		echo "Stopping Unturned server..."
+		
+		while true #Wait until Unturned shuts down, wait one second before trying again
+		do
+			ps aux | grep $UNTURNED_START_LOCATION | grep -q /bin/bash || break
+			read -t 1 </dev/tty10 3<&- 3<&0 <&3
+		done
+		
+		tmux kill-session -t $UNTURNED_SCREEN_SESSION 
 		
 		echo "Getting newest rocketmod and unzipping".
 		
@@ -65,10 +75,6 @@ update()
 		rm -rf rocketmod
 		cd ..
 		
-		echo "Killing tmux screen, updating and starting Unturned server"
-		
-		tmux kill-session -t $UNTURNED_SCREEN_SESSION #We do this all the way down here just to be sure Unturned is already shut down. TODO: add more reliable process for checking whether server is up or down.
-		
 		sh $UNTURNED_UPDATE_SCRIPT
 		sh $UNTURNED_START_SCRIPT
 
@@ -80,5 +86,5 @@ update()
 while true
 do
 	update
-	sleep 300
+	read -t 300 </dev/tty10 3<&- 3<&0 <&3
 done
