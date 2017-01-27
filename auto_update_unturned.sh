@@ -54,6 +54,7 @@ update()
 		count=0
 		while [ "x${UNTURNED_SCREEN_SESSIONS[count]}" != "x" ]
 		do
+			count=$(( $count + 1 ))
 			shutdownserver {UNTURNED_SCREEN_SESSIONS[count]}
 		done
 		echo "Stopping Unturned server..."
