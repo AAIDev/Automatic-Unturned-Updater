@@ -19,6 +19,21 @@ STEAMCMD_DIR=""
 STEAM_USER=  #NO QUOTES
 STEAM_PASS=  #NO QUOTES
 UNTURNED_ACF_LOCATION="" #This is the location of the appmanifest.acf file in the Unturned directory. This is probably somewhere in the steamapps folder in the Unturned root directory.
+shutdownserver()
+(
+	tmux send-keys -t $1 "say \"SHUTTING DOWN IN FIVE SECONDS; UPDATING\"" C-m
+	read -t 1 </dev/tty10 3<&- 3<&0 <&3
+	tmux send-keys -t $1 "say \"SHUTTING DOWN IN FOUR SECONDS; UPDATING\"" C-m
+	read -t 1 </dev/tty10 3<&- 3<&0 <&3
+	tmux send-keys -t $1 "say \"SHUTTING DOWN IN THREE SECONDS; UPDATING\"" C-m
+	read -t 1 </dev/tty10 3<&- 3<&0 <&3
+	tmux send-keys -t $1 "say \"SHUTTING DOWN IN TWO SECONDS; UPDATING\"" C-m
+	read -t 1 </dev/tty10 3<&- 3<&0 <&3
+	tmux send-keys -t $1 "say \"SHUTTING DOWN IN ONE SECOND; UPDATING\"" C-m
+	read -t 1 </dev/tty10 3<&- 3<&0 <&3
+	tmux send-keys -t $1 "shutdown" C-m	
+)
+
 update()
 {
 	rm -rf /root/bin/appcache #Remove appcache folder so app_info_print returns correct information
@@ -39,20 +54,8 @@ update()
 		count=0
 		while [ "x${UNTURNED_SCREEN_SESSIONS[count]}" != "x" ]
 		do
-			count=$(( $count + 1 ))
-			tmux send-keys -t ${UNTURNED_SCREEN_SESSIONS[count]} "say \"SHUTTING DOWN IN FIVE SECONDS; UPDATING\"" C-m
-			read -t 1 </dev/tty10 3<&- 3<&0 <&3
-			tmux send-keys -t ${UNTURNED_SCREEN_SESSIONS[count]} "say \"SHUTTING DOWN IN FOUR SECONDS; UPDATING\"" C-m
-			read -t 1 </dev/tty10 3<&- 3<&0 <&3
-			tmux send-keys -t ${UNTURNED_SCREEN_SESSIONS[count]} "say \"SHUTTING DOWN IN THREE SECONDS; UPDATING\"" C-m
-			read -t 1 </dev/tty10 3<&- 3<&0 <&3
-			tmux send-keys -t ${UNTURNED_SCREEN_SESSIONS[count]} "say \"SHUTTING DOWN IN TWO SECONDS; UPDATING\"" C-m
-			read -t 1 </dev/tty10 3<&- 3<&0 <&3
-			tmux send-keys -t ${UNTURNED_SCREEN_SESSIONS[count]} "say \"SHUTTING DOWN IN ONE SECOND; UPDATING\"" C-m
-			read -t 1 </dev/tty10 3<&- 3<&0 <&3
-			tmux send-keys -t ${UNTURNED_SCREEN_SESSIONS[count]} "shutdown" C-m
-		done	
-		
+			shutdownserver {UNTURNED_SCREEN_SESSIONS[count]}
+		done
 		echo "Stopping Unturned server..."
 		
 		while true #Wait until Unturned shuts down, wait one second before trying again
