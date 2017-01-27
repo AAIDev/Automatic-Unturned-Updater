@@ -7,7 +7,11 @@
 #Credits: LGSM dev KnightLife, StackOverflow
 
 ROCKET_API_KEY=""
-UNTURNED_SCREEN_SESSION=""
+UNTURNED_SCREEN_SESSIONS=(
+"abc" #Just press enter and add another screen here.
+"xyz" #Example
+)
+
 UNTURNED_ROOT_DIRECTORY=""
 UNTURNED_START_SCRIPT=""
 UNTURNED_UPDATE_SCRIPT=""
@@ -30,19 +34,24 @@ update()
 	b="$(cat unturned_server_version.txt)"
 	
 	if [ "$a" -gt "$b" ]; then #Is the buildid of the unturned Steam version more updated than the buildid of the Unturned version? If so, update.
-		echo "SERVER IS OUT OF DATE, SHUTTING DOWN"
+		echo "SERVERS ARE OUT OF DATE, SHUTTING DOWN"
 		
-		tmux send-keys -t $UNTURNED_SCREEN_SESSION "say \"SHUTTING DOWN IN FIVE SECONDS; UPDATING\"" C-m
-		read -t 1 </dev/tty10 3<&- 3<&0 <&3
-		tmux send-keys -t $UNTURNED_SCREEN_SESSION "say \"SHUTTING DOWN IN FOUR SECONDS; UPDATING\"" C-m
-		read -t 1 </dev/tty10 3<&- 3<&0 <&3
-		tmux send-keys -t $UNTURNED_SCREEN_SESSION "say \"SHUTTING DOWN IN THREE SECONDS; UPDATING\"" C-m
-		read -t 1 </dev/tty10 3<&- 3<&0 <&3
-		tmux send-keys -t $UNTURNED_SCREEN_SESSION "say \"SHUTTING DOWN IN TWO SECONDS; UPDATING\"" C-m
-		read -t 1 </dev/tty10 3<&- 3<&0 <&3
-		tmux send-keys -t $UNTURNED_SCREEN_SESSION "say \"SHUTTING DOWN IN ONE SECOND; UPDATING\"" C-m
-		read -t 1 </dev/tty10 3<&- 3<&0 <&3
-		tmux send-keys -t $UNTURNED_SCREEN_SESSION "shutdown" C-m
+		count=0
+		while [ "x${UNTURNED_SCREEN_SESSIONS[count]}" != "x" ]
+		do
+			count=$(( $count + 1 ))
+			tmux send-keys -t ${UNTURNED_SCREEN_SESSIONS[count]} "say \"SHUTTING DOWN IN FIVE SECONDS; UPDATING\"" C-m
+			read -t 1 </dev/tty10 3<&- 3<&0 <&3
+			tmux send-keys -t ${UNTURNED_SCREEN_SESSIONS[count]} "say \"SHUTTING DOWN IN FOUR SECONDS; UPDATING\"" C-m
+			read -t 1 </dev/tty10 3<&- 3<&0 <&3
+			tmux send-keys -t ${UNTURNED_SCREEN_SESSIONS[count]} "say \"SHUTTING DOWN IN THREE SECONDS; UPDATING\"" C-m
+			read -t 1 </dev/tty10 3<&- 3<&0 <&3
+			tmux send-keys -t ${UNTURNED_SCREEN_SESSIONS[count]} "say \"SHUTTING DOWN IN TWO SECONDS; UPDATING\"" C-m
+			read -t 1 </dev/tty10 3<&- 3<&0 <&3
+			tmux send-keys -t ${UNTURNED_SCREEN_SESSIONS[count]} "say \"SHUTTING DOWN IN ONE SECOND; UPDATING\"" C-m
+			read -t 1 </dev/tty10 3<&- 3<&0 <&3
+			tmux send-keys -t ${UNTURNED_SCREEN_SESSIONS[count]} "shutdown" C-m
+		done	
 		
 		echo "Stopping Unturned server..."
 		
@@ -52,7 +61,12 @@ update()
 			read -t 1 </dev/tty10 3<&- 3<&0 <&3
 		done
 		
-		tmux kill-session -t $UNTURNED_SCREEN_SESSION 
+		count=0
+		while [ "x${UNTURNED_SCREEN_SESSIONS[count]}" != "x" ]
+		do
+			count=$(( $count + 1 ))
+			tmux kill-session -t ${UNTURNED_SCREEN_SESSIONS[count]}
+		done	
 		
 		echo "Getting newest rocketmod and unzipping".
 		
