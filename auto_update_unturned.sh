@@ -7,8 +7,8 @@
 #Credits: LGSM dev KnightLife, StackOverflow
 
 ROCKET_API_KEY=""
-UNTURNED_SCREEN_SESSIONS=(
-"abc" #Just press enter and add another screen here.
+UNTURNED_TMUX_SESSIONS=(
+"abc" #Just press enter and add another tmux session here.
 "xyz" #Example
 )
 
@@ -52,10 +52,10 @@ update()
 		echo "SERVERS ARE OUT OF DATE, SHUTTING DOWN"
 		
 		count=0
-		while [ "x${UNTURNED_SCREEN_SESSIONS[count]}" != "x" ]
+		while [ "x${UNTURNED_TMUX_SESSIONS[count]}" != "x" ]
 		do
 			count=$(( $count + 1 ))
-			shutdownserver {UNTURNED_SCREEN_SESSIONS[count]}
+			shutdownserver {UNTURNED_TMUX_SESSIONS[count]}
 		done
 		echo "Stopping Unturned server..."
 		
@@ -69,7 +69,7 @@ update()
 		while [ "x${UNTURNED_SCREEN_SESSIONS[count]}" != "x" ]
 		do
 			count=$(( $count + 1 ))
-			tmux kill-session -t ${UNTURNED_SCREEN_SESSIONS[count]}
+			tmux kill-session -t ${UNTURNED_TMUX_SESSIONS[count]}
 		done	
 		
 		echo "Getting newest rocketmod and unzipping".
