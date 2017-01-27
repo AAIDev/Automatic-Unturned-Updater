@@ -2,7 +2,7 @@
 
 #This process starts the Unturned server.
 
-SERVER_NAME="" #Name of your server
+SERVER_NAME="" #Name of your TMUX session
 SCREEN_NAME="" #Name of your server
 ROCKET_START_DIR="" #The directory of the start.sh program installed when Rocketmod is first installed.
 
