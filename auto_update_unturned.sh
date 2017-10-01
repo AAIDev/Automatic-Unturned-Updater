@@ -8,17 +8,16 @@
 
 ROCKET_API_KEY=""
 UNTURNED_TMUX_SESSIONS=(
-"abc" #Just press enter and add another tmux session here.
-"xyz" #Example
+"unturnedrp" #Just press enter and add another tmux session here.
 )
 
-UNTURNED_ROOT_DIRECTORY=""
-UNTURNED_START_SCRIPT=""
-UNTURNED_UPDATE_SCRIPT=""
-STEAMCMD_DIR=""
-STEAM_USER=  #NO QUOTES
-STEAM_PASS=  #NO QUOTES
-UNTURNED_ACF_LOCATION="" #This is the location of the appmanifest.acf file in the Unturned directory. This is probably somewhere in the steamapps folder in the Unturned root directory.
+UNTURNED_ROOT_DIRECTORY="/root/"
+UNTURNED_START_SCRIPT="/root/Scripts/update_unturned.sh"
+UNTURNED_UPDATE_SCRIPT="/root/Scripts/update_unturned.sh"
+STEAMCMD_DIR="/steamcmd"
+STEAM_USER=
+STEAM_PASS=
+UNTURNED_ACF_LOCATION="/root/steamapps/appmanifest_304930.acf" #This is the location of the appmanifest.acf file in the Unturned directory. This is probably somewhere in the steamapps folder in the Unturned root directory.
 shutdownserver()
 (
 	tmux send-keys -t $1 "say \"SHUTTING DOWN IN FIVE SECONDS; UPDATING\"" C-m
@@ -55,7 +54,7 @@ update()
 		while [ "x${UNTURNED_TMUX_SESSIONS[count]}" != "x" ]
 		do
 			count=$(( $count + 1 ))
-			shutdownserver {UNTURNED_TMUX_SESSIONS[count]}
+			shutdownserver ${UNTURNED_TMUX_SESSIONS[count]}
 		done
 		echo "Stopping Unturned server..."
 		
@@ -75,7 +74,7 @@ update()
 		echo "Getting newest rocketmod and unzipping".
 		
 		cd $UNTURNED_ROOT_DIRECTORY
-		wget http://api.rocketmod.net/download/unturned-linux/stable/$ROCKET_API_KEY/rocketmod.zip
+		wget https://ci.rocketmod.net/job/Rocket.Unturned%20Linux/lastSuccessfulBuild/artifact/Rocket.Unturned/bin/Release/Rocket.zip -O rocketmod.zip
 		if [ ! -f /root/unturned_server/rocketmod.zip ]; then
 			echo "Directory not found, API either down or four calls have been used"
 		fi
